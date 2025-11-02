@@ -241,7 +241,7 @@
       </div>
 
       <label>Email (optional)</label>
-      <input name="email" type="email" placeholder="patient@email.com" />
+      <input name="email" type="email" placeholder="patient@example.com" />
 
       <label>City *</label>
       <input name="city" required placeholder="Enter city" />
@@ -289,7 +289,8 @@
   </div>
 
   <script>
-    const API_URL = "/api/proxy";
+    // Direct API URL with CORS Proxy
+    const API_URL = "https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbxQz-BL5mxHcSMSS-uyC_MblnMpS_ye5_VYUqm9QHmdYWV16izKNCFmrVceR-3rtlMBpw/exec";
 
     const regForm = document.getElementById("regForm");
     const statusMsg = document.getElementById("statusMsg");
