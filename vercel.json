@@ -1,9 +1,5 @@
 {
   "buildCommand": "",
   "outputDirectory": ".",
-  "functions": {
-    "api/proxy.js": {
-      "maxDuration": 10
-    }
-  }
+  "public": true
 }
