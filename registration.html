@@ -1,1 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dental Patient Registration</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter:500,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #667eea;
+      --secondary: #764ba2;
+      --bg: #f4f7fa;
+      --white: #fff;
+      --input-bg: #eee;
+      --radius: 14px;
+      --text-color: #2a3141;
+      --success-bg: #e8fff1;
+      --success-border: #31a354;
+      --error-bg: #fff3f4;
+      --error-border: #f74d5c;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      font-family: 'Inter', Arial, sans-serif;
+      color: var(--text-color);
+    }
+    .container {
+      max-width: 460px;
+      margin: 3vh auto 5vh auto;
+      padding: 2rem 1.8rem;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: 0 6px 48px rgba(102, 126, 234, 0.1);
+    }
+    h1 {
+      text-align: center;
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 1.2rem;
+      background: linear-gradient(90deg, var(--primary) 50%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.18rem;
+      font-size: 0.94rem;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.75em 1em;
+      margin-bottom: 0.9rem;
+      border: none;
+      border-radius: var(--radius);
+      background: var(--input-bg);
+      font-size: 1rem;
+      box-sizing: border-box;
+      outline-offset: 2px;
+      transition: outline-color 0.2s ease;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: 3px solid var(--primary);
+    }
+    .row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .row > div {
+      flex: 1 1 45%;
+    }
+    @media (max-width: 520px) {
+      .row {
+        flex-direction: column;
+      }
+      .row > div {
+        flex-basis: 100%;
+      }
+    }
+    button {
+      width: 100%;
+      background: linear-gradient(87deg, var(--primary) 25%, var(--secondary) 95%);
+      border: none;
+      border-radius: var(--radius);
+      color: white;
+      font-weight: 700;
+      font-size: 1.15rem;
+      padding: 0.94rem 0;
+      cursor: pointer;
+      box-shadow: 0 4px 20px #667eea55;
+      user-select: none;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+    button:hover:enabled {
+      background: linear-gradient(90deg, var(--secondary) 40%, var(--primary) 100%);
+      box-shadow: 0 7px 30px #764ba288;
+    }
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    #statusMsg {
+      margin-bottom: 1rem;
+      padding: 0.7rem 1rem;
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: none;
+    }
+    #statusMsg.success {
+      background: var(--success-bg);
+      border-left: 5px solid var(--success-border);
+      color: var(--success-border);
+      display: block;
+    }
+    #statusMsg.error {
+      background: var(--error-bg);
+      border-left: 5px solid var(--error-border);
+      color: var(--error-border);
+      display: block;
+    }
+    #uidHint {
+      text-align: right;
+      color: #666;
+      font-size: 0.88rem;
+      height: 1.1rem;
+      margin-bottom: 0.3rem;
+      font-style: italic;
+      user-select: none;
+    }
+    #historyModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1500;
+      background: rgba(0, 0, 0, 0.17);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-top: 60px;
+    }
+    #historyModal .modal-content {
+      max-width: 520px;
+      margin: auto;
+      background: white;
+      border-radius: var(--radius);
+      padding: 1.5rem 2rem;
+      box-shadow: 0 4px 50px #667eea44;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    #historyModal h2 {
+      margin-top: 0;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 0.04em;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+    .history-entry {
+      background: #f6f8fc;
+      border: 1px solid #e4e9fd;
+      border-radius: 10px;
+      padding: 0.9rem;
+      margin-bottom: 0.9rem;
+      font-size: 0.93rem;
+      line-height: 1.6;
+      color: var(--text-color);
+    }
+    .history-entry b {
+      color: var(--primary);
+    }
+    .uid-badge {
+      display: inline-block;
+      background: #667eea20;
+      color: var(--primary);
+      padding: 0.2em 0.6em;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.9em;
+    }
+    #closeHistoryBtn {
+      background: var(--secondary);
+      margin: 1rem auto 0 auto;
+      display: block;
+      color: white;
+      padding: 0.6rem 2.3rem;
+      border-radius: var(--radius);
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    #closeHistoryBtn:hover {
+      background: var(--primary);
+    }
+    .btn-secondary {
+      background: white !important;
+      color: var(--secondary) !important;
+      border: 2px solid var(--secondary) !important;
+      box-shadow: none !important;
+      margin-top: 1rem;
+    }
+    .btn-secondary:hover {
+      background: var(--secondary) !important;
+      color: white !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🦷 Dental Patient Registration</h1>
+    <div id="statusMsg"></div>
+    
+    <form id="regForm" autocomplete="off">
+      <label for="contact">Mobile (10 digits) *</label>
+      <input type="tel" id="contact" name="contact" pattern="[6-9][0-9]{9}" maxlength="10" placeholder="9876543210" required />
+      <div id="uidHint"></div>
 
+      <label>Full Name *</label>
+      <input name="name" required placeholder="Enter full name" />
+
+      <div class="row">
+        <div>
+          <label>Age *</label>
+          <input type="number" name="age" min="1" max="120" required />
+        </div>
+        <div>
+          <label>Gender *</label>
+          <select name="gender" required>
+            <option value="" hidden>Choose</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <label>Email (optional)</label>
+      <input name="email" type="email" placeholder="patient@email.com" />
+
+      <label>City *</label>
+      <input name="city" required placeholder="Enter city" />
+
+      <label>Medical History</label>
+      <input name="medhistory" placeholder="e.g., Diabetes, BP, Heart disease" />
+
+      <label>Allergies</label>
+      <input name="allergies" placeholder="e.g., Penicillin, Peanuts" />
+
+      <label>Birthday</label>
+      <input name="birthday" type="date" />
+
+      <label>Patient Tag</label>
+      <select name="tag">
+        <option value="New">New</option>
+        <option value="Regular">Regular</option>
+        <option value="VIP">VIP</option>
+        <option value="Defaulter">Defaulter</option>
+      </select>
+
+      <label>Follow-up Frequency</label>
+      <select name="followup">
+        <option value="">None</option>
+        <option value="Quarterly">Quarterly (3 months)</option>
+        <option value="Half-Yearly">Half-Yearly (6 months)</option>
+        <option value="Annual">Annual (12 months)</option>
+      </select>
+
+      <label>Notes</label>
+      <textarea name="notes" rows="2" placeholder="Any additional information..."></textarea>
+
+      <button id="saveBtn" type="submit">Register / Add Visit</button>
+    </form>
+    
+    <button class="btn-secondary" id="showHistoryBtn">View Patient History</button>
+  </div>
+
+  <div id="historyModal">
+    <div class="modal-content">
+      <h2>Patient Visit History</h2>
+      <div id="historyContent"></div>
+      <button id="closeHistoryBtn">Close</button>
+    </div>
+  </div>
+
+  <script>
+    // CORRECTED API URL - Single endpoint only
+    const API_URL = "https://script.google.com/macros/s/AKfycbypoocXP5XtIhHgWX1jhrVf920Ch5rbxJOdwjWBl7nLE8tGgOyO6Rqr_iMWNFnO9QcLow/exec";
+
+    const regForm = document.getElementById("regForm");
+    const statusMsg = document.getElementById("statusMsg");
+    const uidHint = document.getElementById("uidHint");
+    const showHistoryBtn = document.getElementById("showHistoryBtn");
+    const historyModal = document.getElementById("historyModal");
+    const historyContent = document.getElementById("historyContent");
+    const closeHistoryBtn = document.getElementById("closeHistoryBtn");
+
+    function showMessage(message, type = "success") {
+      statusMsg.className = type;
+      statusMsg.innerHTML = message;
+      setTimeout(() => {
+        statusMsg.className = "";
+      }, 4000);
+    }
+
+    function setUIDHint(message) {
+      uidHint.textContent = message;
+    }
+
+    async function callAPI(action, payload) {
+      try {
+        const resp = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action, ...payload }),
+        });
+        
+        if (!resp.ok) {
+          throw new Error(`HTTP error! status: ${resp.status}`);
+        }
+        
+        const data = await resp.json();
+        return data;
+      } catch (err) {
+        console.error('API Error:', err);
+        return { error: err.message || "Network error. Check console (F12) for details." };
+      }
+    }
+
+    document.getElementById("contact").addEventListener("blur", async function () {
+      const contact = this.value.replace(/\D/g, "");
+      
+      if (!contact) {
+        setUIDHint("");
+        return;
+      }
+      
+      if (!/^[6-9][0-9]{9}$/.test(contact)) {
+        setUIDHint("⚠️ Enter valid 10-digit Indian mobile number");
+        return;
+      }
+      
+      setUIDHint("⏳ Checking patient...");
+      const result = await callAPI("getOrCreatePatientUID", { contact });
+      
+      if (result.error) {
+        setUIDHint(`❌ Error: ${result.error}`);
+      } else if (result.returning) {
+        setUIDHint(`✓ Existing Patient: ${result.uid} (visit will be added)`);
+      } else {
+        setUIDHint(`✨ New Patient - UID: ${result.uid}`);
+      }
+    });
+
+    regForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(regForm);
+      const patient = Object.fromEntries(formData.entries());
+      const contact = patient.contact.replace(/\D/g, "");
+      
+      if (!/^[6-9][0-9]{9}$/.test(contact)) {
+        showMessage("❌ Invalid mobile number", "error");
+        return;
+      }
+      
+      patient.contact = contact;
+
+      const uidResult = await callAPI("getOrCreatePatientUID", { contact });
+      if (uidResult.error) {
+        showMessage(`❌ ${uidResult.error}`, "error");
+        return;
+      }
+      
+      patient.uid = uidResult.uid;
+      if (!uidResult.returning) {
+        patient.firstVisit = new Date().toISOString();
+      }
+
+      const saveResult = await callAPI("savePatientVisit", { patientObj: patient });
+      if (saveResult.success) {
+        showMessage(`✅ Patient visit recorded! UID: <b>${saveResult.uid}</b>`, "success");
+        regForm.reset();
+        setUIDHint("");
+      } else {
+        showMessage(`❌ ${saveResult.error || "Unknown error"}`, "error");
+      }
+    });
+
+    showHistoryBtn.addEventListener("click", async () => {
+      const query = prompt(
+        "Enter patient UID (e.g. PAT001) or 10-digit mobile number:",
+        ""
+      );
+      
+      if (!query) return;
+      
+      const patientId = query.trim().toUpperCase();
+      historyContent.innerHTML = '<p style="text-align:center;color:#666;">⏳ Loading...</p>';
+      historyModal.style.display = "block";
+      
+      const history = await callAPI("getPatientHistory", { contactOrUID: patientId });
+      
+      if (!history || !history.length) {
+        historyContent.innerHTML = "<p style='color:#c52e3a;text-align:center;'>❌ No history found.</p>";
+      } else {
+        const totalVisits = history.length;
+        historyContent.innerHTML = `
+          <div style="text-align:center;margin-bottom:1rem;">
+            <span class="uid-badge" style="font-size:1.1em;">${history[0][0]}</span>
+            <p style="margin:0.5rem 0;color:#666;">Total Visits: <b>${totalVisits}</b></p>
+          </div>
+        ` + history
+          .map((row, idx) => `
+          <div class="history-entry">
+            <b>Visit ${totalVisits - idx}:</b> ${row[11] ? new Date(row[11]).toLocaleDateString('en-IN') : 'N/A'}<br />
+            <b>Name:</b> ${row[1]} (${row[3]})<br />
+            <b>Age:</b> ${row[2]} | <b>Contact:</b> ${row[4]}<br />
+            <b>City:</b> ${row[6] || '-'}<br />
+            <b>Medical History:</b> ${row[7] || '-'}<br />
+            <b>Allergies:</b> ${row[8] || '-'}<br />
+            <b>Tag:</b> <span style="background:#667eea20;padding:0.1em 0.5em;border-radius:4px;">${row[9]}</span><br />
+            <b>Notes:</b> <i>${row[16] || '-'}</i>
+          </div>`)
+          .join("");
+      }
+    });
+
+    closeHistoryBtn.addEventListener("click", () => {
+      historyModal.style.display = "none";
+    });
+
+    window.onclick = (e) => {
+      if (e.target === historyModal) historyModal.style.display = "none";
+    };
+  </script>
+</body>
+</html>
