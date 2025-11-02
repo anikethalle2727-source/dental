@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dental Dark</title>
+  <title>Dental Patient Registration</title>
   <link href="https://fonts.googleapis.com/css?family=Inter:500,700&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -289,8 +289,10 @@
   </div>
 
   <script>
-    // CORRECTED API URL - Single endpoint only
-    const API_URL = "https://script.google.com/macros/s/AKfycbxQz-BL5mxHcSMSS-uyC_MblnMpS_ye5_VYUqm9QHmdYWV16izKNCFmrVceR-3rtlMBpw/exec";
+    // CORS Proxy + Apps Script API URL
+    const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
+    const API_BASE = "https://script.google.com/macros/s/AKfycbxQz-BL5mxHcSMSS-uyC_MblnMpS_ye5_VYUqm9QHmdYWV16izKNCFmrVceR-3rtlMBpw/exec";
+    const API_URL = CORS_PROXY + API_BASE;
 
     const regForm = document.getElementById("regForm");
     const statusMsg = document.getElementById("statusMsg");
